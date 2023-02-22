@@ -1,6 +1,7 @@
 # ESPHome garage door notifications based on RPi-Pico-W HW.
 
 For hardware used, see here: <br /> https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html <br />
+
 Mounted in a Raspberry PI PICO Breakout Board with Pin Header: <br /> https://www.amazon.com/gp/product/B091F7YSCD <br />
 
 Door sensor: https://www.amazon.com/gp/product/B011OXPZ7Y <br />
