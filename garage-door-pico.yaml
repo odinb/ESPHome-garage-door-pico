@@ -1,5 +1,10 @@
+substitutions:
+  devicename: "garage-door-pico"
+  upper_devicename: "Garage-Door pico"
+
 esphome:
-  name: garage-door-pico
+  name: "${devicename}"
+  friendly_name: "${upper_devicename}"
 
 rp2040:
   board: rpipicow
@@ -27,7 +32,7 @@ wifi:
 
   # Enable fallback hotspot in case wifi connection fails
   ap:
-    ssid: "Garage-Door-Pico"
+    ssid: "${upper_devicename}"
     password: !secret wifi_hotspot_password
 
 # Enable Web server. Not yet supported on Pico.
@@ -51,7 +56,7 @@ output:
 # Binary sensor representing the
 # garage-door status for each door. 
 binary_sensor:
-  # First Garage Door
+  # Tesla Garage Door
   - platform: gpio
     pin:
       number: 3
@@ -62,8 +67,8 @@ binary_sensor:
         open_drain: false
         pulldown: false
       inverted: false
-    name: First Garage Door
-    id: First_garage_door
+    name: Tesla Garage Door
+    id: tesla_garage_door
     device_class: door
     filters:
       - delayed_on: 10ms
@@ -73,14 +78,14 @@ binary_sensor:
         - if:
             condition:
               or:
-                - binary_sensor.is_on: first_garage_door
-                - binary_sensor.is_on: second_garage_door
+                - binary_sensor.is_on: tesla_garage_door
+                - binary_sensor.is_on: cadi_garage_door
             then:
               - output.turn_on: LED
             else:
               - output.turn_off: LED
 
-  # Second Garage Door
+  # Cadi Garage Door
   - platform: gpio
     pin:
       number: 2
@@ -91,8 +96,8 @@ binary_sensor:
         open_drain: false
         pulldown: false
       inverted: false
-    name: Second Garage Door
-    id: Second_garage_door
+    name: Cadi Garage Door
+    id: cadi_garage_door
     device_class: door
     filters:
       - delayed_on: 10ms
@@ -102,8 +107,8 @@ binary_sensor:
         - if:
             condition:
               or:
-                - binary_sensor.is_on: first_garage_door
-                - binary_sensor.is_on: second_garage_door
+                - binary_sensor.is_on: tesla_garage_door
+                - binary_sensor.is_on: cadi_garage_door
             then:
               - output.turn_on: LED
             else:
