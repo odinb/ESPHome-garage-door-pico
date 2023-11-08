@@ -1,3 +1,6 @@
+# Raspberry Pi Pico W Garage Door Sensor
+# https://github.com/geerlingguy/pico-w-garage-door-sensor
+
 substitutions:
   devicename: "garage-door-pico"
   upper_devicename: "Garage-Door pico"
