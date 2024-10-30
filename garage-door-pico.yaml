@@ -1,13 +1,48 @@
 # Raspberry Pi Pico W Garage Door Sensor
 # https://github.com/geerlingguy/pico-w-garage-door-sensor
 
+# If error:
+# collect2: error: ld returned 1 exit status
+# *** [.pioenvs/garage-door-pico/firmware.elf] Error 1
+
+# Then try removing "rm -rf /data/cache/platformio/platforms/raspberrypi/" from HASSOS ESPHOME container.
+
+# If still not working, pick an older build, like https://github.com/maxgerhardt/platform-raspberrypi.git#3821cc1
+
+# History of branches:
+#Commits on Sep 23, 2024 (works)
+#3821cc132c2707a0cfdb44984ccbfc22649dc3f9
+
+#Commits on Sep 27, 2024 (broken)
+#2a8c40e25c1be1c245f269c856a5111a4c47b435
+
+#Commits on Sep 28, 2024 (broken)
+#8853c08f7964cfc2d3ba20e303213c5f8faeae71
+
+#Commits on Sep 29, 2024 (broken)
+#a7eddaaf010b973987b013d3f7380891e9afd449
+
+#Commits on Sep 30, 2024 (broken)
+#1177f9c9029080d1a1f6ffa27028580c7147873f
+
+#Commits on Oct 1, 2024 (broken)
+#088a074ba98e091f9abc48db91b99bedf908332b
+
+#Commits on Oct 6, 2024 (broken)
+#5b72058658ebaf98045755662bc8b28479bd288b
+
+#Commits on Oct 12, 2024 (broken)
+#2d445020acf8b792768a5fa5ba1870ac9607c11c
+
+
 substitutions:
-  devicename: "garage-door-pico"
-  upper_devicename: "Garage-Door pico"
+  name: garage-door-pico
+  friendly_name: Garage-Door pico
 
 esphome:
-  name: "${devicename}"
-  friendly_name: "${upper_devicename}"
+  name: ${name}
+  name_add_mac_suffix: false
+  friendly_name: ${friendly_name}
 
 rp2040:
   board: rpipicow
@@ -25,8 +60,13 @@ api:
 
 # Enable over-the-air updates.
 ota:
-  safe_mode: true
+  platform: esphome
   password: !secret ota_password01
+
+safe_mode:
+  disabled: false
+  reboot_timeout: 10min
+  num_attempts: 5
 
 # Connect to WiFi.
 wifi:
@@ -35,7 +75,7 @@ wifi:
 
   # Enable fallback hotspot in case wifi connection fails
   ap:
-    ssid: "${upper_devicename}"
+    ssid: ${friendly_name}
     password: !secret wifi_hotspot_password
 
 # Enable Web server. Not yet supported on Pico.
@@ -59,7 +99,7 @@ output:
 # Binary sensor representing the
 # garage-door status for each door. 
 binary_sensor:
-  # First Garage Door
+  # Tesla Garage Door
   - platform: gpio
     pin:
       number: 3
@@ -70,8 +110,8 @@ binary_sensor:
         open_drain: false
         pulldown: false
       inverted: false
-    name: First Garage Door
-    id: first_garage_door
+    name: Tesla Garage Door
+    id: tesla_garage_door
     device_class: door
     filters:
       - delayed_on: 10ms
@@ -81,14 +121,14 @@ binary_sensor:
         - if:
             condition:
               or:
-                - binary_sensor.is_on: first_garage_door
-                - binary_sensor.is_on: second_garage_door
+                - binary_sensor.is_on: tesla_garage_door
+                - binary_sensor.is_on: cadi_garage_door
             then:
               - output.turn_on: LED
             else:
               - output.turn_off: LED
 
-  # Second Garage Door
+  # Cadi Garage Door
   - platform: gpio
     pin:
       number: 2
@@ -99,8 +139,8 @@ binary_sensor:
         open_drain: false
         pulldown: false
       inverted: false
-    name: Second Garage Door
-    id: second_garage_door
+    name: Cadi Garage Door
+    id: cadi_garage_door
     device_class: door
     filters:
       - delayed_on: 10ms
@@ -110,8 +150,8 @@ binary_sensor:
         - if:
             condition:
               or:
-                - binary_sensor.is_on: first_garage_door
-                - binary_sensor.is_on: second_garage_door
+                - binary_sensor.is_on: tesla_garage_door
+                - binary_sensor.is_on: cadi_garage_door
             then:
               - output.turn_on: LED
             else:
